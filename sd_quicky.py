@@ -1,7 +1,29 @@
 import gdata
 from gdata.calendar import client
-from bottle import route, run, debug, template, request, validate, error
+from bottle import route, run, debug, template, request, validate, error, response
+import re
 
+def matchOrEmpty(regex,text):
+    match=regex.findall(text)
+    text=match[0] if match else ''
+
+    #remove any br tags
+    text=re.compile("</?\w+\s*/?>").sub("",text)
+
+    return text.strip()
+
+
+def parseEntry(entry):
+    d={}
+
+    d["title"]=entry.title.text
+    content=entry.content.text
+    d["where"]= matchOrEmpty(re.compile("Where:(.*)"),content)
+    d["when"]= matchOrEmpty(re.compile("When:(.*)"),content)
+    d["description"]= matchOrEmpty(re.compile("Description:(.*)Link:",re.DOTALL),content)
+    d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
+
+    return d
 
 @route('/feed/:start/:end')
 def show_feed(start,end):
@@ -13,14 +35,13 @@ def show_feed(start,end):
     query = gdata.calendar.client.CalendarEventQuery()
     query.start_min = start  #start_date "2007-06-26"
     query.start_max = end    #end_date "2007-07-01"
-    print "Start: %s" % start
-    print end
-    feed = calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry
 
+    feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
+
+    response.content_type="text/plain"
     return template("feed.tpl",locals())
 
-debug(True)
-run(reloader=True)
+if __name__ =="__main__":
+    debug(True)
+    run(reloader=True)
 
-#for i, an_event in enumerate(feed.entry):
-#  print '\t%s. %s' % (i, an_event.title.text,)
