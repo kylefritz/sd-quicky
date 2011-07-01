@@ -38,7 +38,6 @@ def show_feed(start,end):
 
     feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
 
-    response.content_type="text/plain"
     return template("feed.tpl",locals())
 
 if __name__ =="__main__":
