@@ -20,7 +20,9 @@
 
 When: {{evt["when"]}}
 Where: {{evt["where"]}}
-More Info: {{evt["link"]}}
+%if evt.has_key("short-link"):
+More Info: {{evt["short-link"]}}
+%end
 
 {{evt["description"]}}
 

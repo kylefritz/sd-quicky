@@ -3,6 +3,12 @@ from gdata.calendar import client
 from bottle import route, run, debug, template, request, validate, error, response, redirect
 import re
 from datetime import date, timedelta
+import bitly
+
+BITLY_LOGIN="sdbaltimore"
+BITLY_API="R_3677d6826fab742f02f027226dff3d2c"
+BITLY=bitly.Api(login=BITLY_LOGIN,apikey=BITLY_API)
+
 
 def matchOrEmpty(regex,text):
     match=regex.findall(text)
@@ -15,16 +21,28 @@ def matchOrEmpty(regex,text):
 
 
 def parseEntry(entry):
-    d={}
+		d={}
 
-    d["title"]=entry.title.text
-    content=entry.content.text
-    d["where"]= matchOrEmpty(re.compile("Where:(.*)"),content)
-    d["when"]= matchOrEmpty(re.compile("When:(.*)"),content)
-    d["description"]= matchOrEmpty(re.compile("Description:(.*)Link:",re.DOTALL),content)
-    d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
+		d["title"]=entry.title.text
+		content=entry.content.text
+		d["where"]= matchOrEmpty(re.compile("Where:(.*)"),content)
+		d["when"]= matchOrEmpty(re.compile("When:(.*)"),content)
+		d["description"]= matchOrEmpty(re.compile("Description:(.*)Link:",re.DOTALL),content)
+		#look for a link in the body
+		try:
+			d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
+			
+			#try to shorten link, fall back to regular link
+			d["short-link"]=d["link"]
+			try:
+				d["short-link"]=BITLY.shorten(d["link"])
+			except:
+				pass
+		except:
+			#if we don't find one, go on
+			pass
 
-    return d
+		return d
 
 def monday2monday(near):
 		#find the nearest sunday 
