@@ -1,7 +1,8 @@
 import gdata
 from gdata.calendar import client
-from bottle import route, run, debug, template, request, validate, error, response
+from bottle import route, run, debug, template, request, validate, error, response, redirect
 import re
+from datetime import date, timedelta
 
 def matchOrEmpty(regex,text):
     match=regex.findall(text)
@@ -24,6 +25,23 @@ def parseEntry(entry):
     d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
 
     return d
+
+def monday2monday(near):
+		#find the nearest sunday 
+		#isoweekday 7 => sunday
+		one_day=timedelta(days=1)
+		while near.isoweekday() != 1:
+			near=near+one_day
+		#find the following one
+		following_sunday=near+(7*one_day)
+		return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
+
+
+@route('/')
+def redirect_to_closest_feed():
+		closestWeek=monday2monday(date.today())
+		print '/feed/%s/%s'%(closestWeek)
+		redirect('/feed/%s/%s'%(closestWeek))
 
 @route('/feed/:start/:end')
 def show_feed(start,end):
