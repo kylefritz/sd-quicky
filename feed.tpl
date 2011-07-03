@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+<title>Startup Digest Formatter</title>
   <style>
     textarea{
     width:90%;
