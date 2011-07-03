@@ -58,7 +58,6 @@ def monday2monday(near):
 @route('/')
 def redirect_to_closest_feed():
 		closestWeek=monday2monday(date.today())
-		print '/feed/%s/%s'%(closestWeek)
 		redirect('/feed/%s/%s'%(closestWeek))
 
 @route('/feed/:start/:end')
