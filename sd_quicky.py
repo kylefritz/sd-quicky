@@ -44,20 +44,20 @@ def parseEntry(entry):
 
 		return d
 
-def monday2monday(near):
+def monday2sunday(near):
 		#find the nearest sunday 
 		#isoweekday 7 => sunday
 		one_day=timedelta(days=1)
 		while near.isoweekday() != 1:
 			near=near+one_day
 		#find the following one
-		following_sunday=near+(7*one_day)
+		following_sunday=near+(6*one_day)
 		return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
 
 
 @route('/')
 def redirect_to_closest_feed():
-		closestWeek=monday2monday(date.today())
+		closestWeek=monday2sunday(date.today())
 		redirect('/feed/%s/%s'%(closestWeek))
 
 @route('/feed/:start/:end')
