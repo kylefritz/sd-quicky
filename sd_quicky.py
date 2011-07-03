@@ -64,7 +64,7 @@ def redirect_to_closest_feed():
 def show_feed(start,end):
     #we got the feed
     calendar_client = gdata.calendar.client.CalendarClient()
-    feed_uri="https://www.google.com/calendar/feeds/l4ut8vep3q5ammqv91n205u3lc%40group.calendar.google.com/private-75b3611bd28055ede485cb6afd9380b9/basic"
+    feed_uri="https://www.google.com/calendar/feeds/l4ut8vep3q5ammqv91n205u3lc%40group.calendar.google.com/private-75b3611bd28055ede485cb6afd9380b9/basic?orderby=starttime&sortorder=ascending"
 
     #for time
     query = gdata.calendar.client.CalendarEventQuery()
