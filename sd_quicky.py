@@ -2,7 +2,7 @@ import gdata
 from gdata.calendar import client
 from bottle import route, run, debug, template, request, validate, error, response, redirect
 import re
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import bitly
 
 BITLY_LOGIN="sdbaltimore"
@@ -54,7 +54,6 @@ def monday2sunday(near):
 		following_sunday=near+(6*one_day)
 		return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
 
-
 @route('/')
 def redirect_to_closest_feed():
 		closestWeek=monday2sunday(date.today())
@@ -72,6 +71,16 @@ def show_feed(start,end):
     query.start_max = end    #end_date "2007-07-01"
 
     feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
+    
+    def nextweek(thisweek):
+        newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') + timedelta(days=7)
+        newenddate = newstartdate + timedelta(days=6)
+        return (newstartdate.strftime('%Y-%m-%d'),newenddate.strftime('%Y-%m-%d'))
+    
+    def lastweek(thisweek):
+        newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') - timedelta(days=7)
+        newenddate = newstartdate + timedelta(days=6)
+        return (newstartdate.strftime('%Y-%m-%d'),newenddate.strftime('%Y-%m-%d'))
 
     return template("feed.tpl",locals())
 
