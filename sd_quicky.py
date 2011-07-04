@@ -5,6 +5,7 @@ import re
 from datetime import date, timedelta, datetime
 import bitly
 
+
 BITLY_LOGIN="sdbaltimore"
 BITLY_API="R_3677d6826fab742f02f027226dff3d2c"
 BITLY=bitly.Api(login=BITLY_LOGIN,apikey=BITLY_API)
@@ -24,11 +25,11 @@ def parseEntry(entry):
 		d={}
 
 		d["title"]=entry.title.text
-		content=entry.content.text
-		d["where"]= matchOrEmpty(re.compile("Where:(.*)"),content)
-		d["when"]= matchOrEmpty(re.compile("When:(.*)"),content)
-		d["description"]= matchOrEmpty(re.compile("Description:(.*)Link:",re.DOTALL),content)
+		d["when"]=entry.when.pop(0).start
+		d["where"]=entry.where.pop(0).value
+		d["description"]=entry.content.text
 		#look for a link in the body
+		content=entry.content.text
 		try:
 			d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
 			
@@ -54,6 +55,7 @@ def monday2sunday(near):
 		following_sunday=near+(6*one_day)
 		return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
 
+
 @route('/')
 def redirect_to_closest_feed():
 		closestWeek=monday2sunday(date.today())
@@ -63,7 +65,7 @@ def redirect_to_closest_feed():
 def show_feed(start,end):
     #we got the feed
     calendar_client = gdata.calendar.client.CalendarClient()
-    feed_uri="https://www.google.com/calendar/feeds/l4ut8vep3q5ammqv91n205u3lc%40group.calendar.google.com/private-75b3611bd28055ede485cb6afd9380b9/basic?orderby=starttime&sortorder=ascending"
+    feed_uri="https://www.google.com/calendar/feeds/l4ut8vep3q5ammqv91n205u3lc%40group.calendar.google.com/private-75b3611bd28055ede485cb6afd9380b9/full?orderby=starttime&sortorder=ascending"    
 
     #for time
     query = gdata.calendar.client.CalendarEventQuery()
@@ -71,7 +73,7 @@ def show_feed(start,end):
     query.start_max = end    #end_date "2007-07-01"
 
     feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
-    
+   
     def nextweek(thisweek):
         newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') + timedelta(days=7)
         newenddate = newstartdate + timedelta(days=6)
@@ -81,7 +83,7 @@ def show_feed(start,end):
         newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') - timedelta(days=7)
         newenddate = newstartdate + timedelta(days=6)
         return (newstartdate.strftime('%Y-%m-%d'),newenddate.strftime('%Y-%m-%d'))
-
+        
     return template("feed.tpl",locals())
 
 if __name__ =="__main__":
