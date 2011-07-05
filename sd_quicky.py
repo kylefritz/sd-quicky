@@ -22,50 +22,52 @@ def matchOrEmpty(regex,text):
 
 
 def parseEntry(entry):
-		d={}
+    d={}
+    d["title"]=entry.title.text
+    d["when"]=entry.when.pop(0).start
+    d["where"]=entry.where.pop(0).value
+    content=entry.content.text
+    if "Link:" in content:
+        d["description"]= matchOrEmpty(re.compile("(.*)Link:",re.DOTALL),content)
+        #look for a link in the body
+        try:
+            d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
 
-		d["title"]=entry.title.text
-		d["when"]=entry.when.pop(0).start
-		d["where"]=entry.where.pop(0).value
-		d["description"]=entry.content.text
-		#look for a link in the body
-		content=entry.content.text
-		try:
-			d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
-			
-			#try to shorten link, fall back to regular link
-			d["short-link"]=d["link"]
-			try:
-				d["short-link"]=BITLY.shorten(d["link"])
-			except:
-				pass
-		except:
-			#if we don't find one, go on
-			pass
+            #try to shorten link, fall back to regular link
+            d["short-link"]=d["link"]
+            try:
+                d["short-link"]=BITLY.shorten(d["link"])
+            except:
+                pass
+        except:
+            #if we don't find one, go on
+            pass
+    else:
+        d["description"]=content
 
-		return d
+    return d
 
-def monday2sunday(near):
-		#find the nearest sunday 
-		#isoweekday 7 => sunday
-		one_day=timedelta(days=1)
-		while near.isoweekday() != 1:
-			near=near+one_day
-		#find the following one
-		following_sunday=near+(6*one_day)
-		return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
+def monday2monday(near):
+    #gcal api uses inclusive start date, exclusive end date
+    #find the nearest monday => isoweekday 1
+    one_day=timedelta(days=1)
+    while near.isoweekday() != 1:
+        near=near+one_day
+    #find the following one
+    following_sunday=near+(7*one_day)
+    return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
 
 
 @route('/')
 def redirect_to_closest_feed():
-		closestWeek=monday2sunday(date.today())
-		redirect('/feed/%s/%s'%(closestWeek))
+    closestWeek=monday2monday(date.today())
+    redirect('/feed/%s/%s'%(closestWeek))
 
 @route('/feed/:start/:end')
 def show_feed(start,end):
     #we got the feed
     calendar_client = gdata.calendar.client.CalendarClient()
-    feed_uri="https://www.google.com/calendar/feeds/l4ut8vep3q5ammqv91n205u3lc%40group.calendar.google.com/private-75b3611bd28055ede485cb6afd9380b9/full?orderby=starttime&sortorder=ascending"    
+    feed_uri="https://www.google.com/calendar/feeds/l4ut8vep3q5ammqv91n205u3lc%40group.calendar.google.com/private-75b3611bd28055ede485cb6afd9380b9/full?orderby=starttime&sortorder=ascending"
 
     #for time
     query = gdata.calendar.client.CalendarEventQuery()
@@ -73,17 +75,15 @@ def show_feed(start,end):
     query.start_max = end    #end_date "2007-07-01"
 
     feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
-   
+
     def nextweek(thisweek):
         newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') + timedelta(days=7)
-        newenddate = newstartdate + timedelta(days=6)
-        return (newstartdate.strftime('%Y-%m-%d'),newenddate.strftime('%Y-%m-%d'))
-    
+        return monday2monday(newstartdate)
+
     def lastweek(thisweek):
         newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') - timedelta(days=7)
-        newenddate = newstartdate + timedelta(days=6)
-        return (newstartdate.strftime('%Y-%m-%d'),newenddate.strftime('%Y-%m-%d'))
-        
+        return monday2monday(newstartdate)
+
     return template("feed.tpl",locals())
 
 if __name__ =="__main__":
