@@ -76,13 +76,10 @@ def show_feed(start,end):
 
     feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
 
-    def nextweek(thisweek):
-        newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') + timedelta(days=7)
-        return monday2monday(newstartdate)
-
-    def lastweek(thisweek):
-        newstartdate = datetime.strptime(thisweek, '%Y-%m-%d') - timedelta(days=7)
-        return monday2monday(newstartdate)
+    #find out next/prev week start/end
+    week_start=datetime.strptime(start, '%Y-%m-%d')
+    nextweek=monday2monday(week_start+timedelta(days=7))
+    lastweek=monday2monday(week_start-timedelta(days=7))
 
     return template("feed.tpl",locals())
 

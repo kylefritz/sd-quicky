@@ -14,7 +14,7 @@
 </head>
 <body>
   <h1>Calendar</h1>
-<p><a href="../{{lastweek(start)[0]}}/{{lastweek(start)[1]}}">Last Week</a> | <a href="../{{nextweek(start)[0]}}/{{nextweek(start)[1]}}">Next Week</a></p>
+<p><a href="../{{lastweek[0]}}/{{lastweek[1]}}">Last Week</a> | <a href="../{{nextweek[0]}}/{{nextweek[1]}}">Next Week</a></p>
 <textarea>
 %for evt in feed:
 {{evt["title"]}}
