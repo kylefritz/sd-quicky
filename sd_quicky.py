@@ -4,7 +4,7 @@ from bottle import route, run, debug, template, request, validate, error, respon
 import re
 from datetime import date, timedelta, datetime
 import bitly
-
+import feed.date.rfc3339
 
 BITLY_LOGIN="sdbaltimore"
 BITLY_API="R_3677d6826fab742f02f027226dff3d2c"
@@ -24,7 +24,9 @@ def matchOrEmpty(regex,text):
 def parseEntry(entry):
     d={}
     d["title"]=entry.title.text
-    d["when"]=entry.when.pop(0).start
+    starttime = entry.when.pop(0).start
+    timestamp = feed.date.rfc3339.tf_from_timestamp(starttime)
+    d["when"]=datetime.fromtimestamp(timestamp)
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
     if "Link:" in content:
