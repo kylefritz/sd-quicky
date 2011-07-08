@@ -24,9 +24,7 @@ def matchOrEmpty(regex,text):
 def parseEntry(entry):
     d={}
     d["title"]=entry.title.text
-    starttime = entry.when.pop(0).start
-    timestamp = feed.date.rfc3339.tf_from_timestamp(starttime)
-    d["when"]=datetime.fromtimestamp(timestamp)
+    d["when"]= datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(entry.when.pop(0).start))
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
     if "Link:" in content:
