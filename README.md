@@ -3,11 +3,12 @@
 Format events for startup digest from a google calendar feed
 
 ##TODO
- * change when format to to weekday month day from time to time (Tue Jul 5 from 6pm to 8pm)
+ * add check for multiday events
  * add functionality to 'approve' event, which updates it with result as description and moves it to production cal
  
 
 ##TODONE:
+ * ~~change when format to to weekday month day from time to time (Tue Jul 5 from 6pm to 8pm)~~
  * ~~change rendering of apostrophes from &#39; to '~~
  * ~~banished regexes~~ 
  * ~~fixed descrition bug~~
