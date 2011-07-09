@@ -1,5 +1,5 @@
 import gdata
-from gdata.calendar import client
+from gdata.calendar import client, data
 from bottle import route, run, debug, template, request, validate, error, response, redirect
 import re
 from datetime import date, timedelta, datetime
@@ -24,7 +24,10 @@ def matchOrEmpty(regex,text):
 def parseEntry(entry):
     d={}
     d["title"]=entry.title.text
-    d["when"]= datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(entry.when.pop(0).start))
+    date=entry.when.pop(0)
+    timestamp_start = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.start))
+    timestamp_end = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.end))
+    d["when"]= timestamp_start.strftime('%A, %B %d at %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
     if "Link:" in content:
