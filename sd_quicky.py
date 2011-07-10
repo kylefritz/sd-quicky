@@ -10,7 +10,6 @@ BITLY_LOGIN="briansierakowski"
 BITLY_API="R_0e9d2bad7a1c308142639c1982a93984"
 BITLY=bitly.Api(login=BITLY_LOGIN,apikey=BITLY_API)
 
-
 def matchOrEmpty(regex,text):
     match=regex.findall(text)
     text=match[0] if match else ''
@@ -19,6 +18,7 @@ def matchOrEmpty(regex,text):
     text=re.compile("</?\w+\s*/?>").sub("",text)
 
     return text.strip()
+
 
 
 def parseEntry(entry):
@@ -30,11 +30,12 @@ def parseEntry(entry):
     d["when"]= timestamp_start.strftime('%A, %B %d from %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
-    if "Link:" in content:
-        d["description"]= matchOrEmpty(re.compile("(.*)Link:",re.DOTALL),content)
+    d["description"]=content
+    link_regex = matchOrEmpty(re.compile("http://[^ ]+"),content)
+    if link_regex in content:
         #look for a link in the body
         try:
-            d["link"]= matchOrEmpty(re.compile("Link:(.*)"),content)
+            d["link"]= matchOrEmpty(re.compile("http://[^ ]+"),content)
 
             #try to shorten link, fall back to regular link
             d["short-link"]=d["link"]
@@ -45,9 +46,6 @@ def parseEntry(entry):
         except:
             #if we don't find one, go on
             pass
-    else:
-        d["description"]=content
-
     return d
 
 def monday2monday(near):
