@@ -84,6 +84,26 @@ def show_feed(start,end):
 
     return template("feed.tpl",locals())
 
+# Would be cool if we could pass feed_uri in the URL so that we could test other cals and let people use our fun tool.
+@route('/othercal/:feed_uri/:start/:end')
+def show_feed(feed_uri,start,end):
+    #we got the feed
+    calendar_client = gdata.calendar.client.CalendarClient()
+
+    #for time
+    query = gdata.calendar.client.CalendarEventQuery()
+    query.start_min = start  #start_date "2007-06-26"
+    query.start_max = end    #end_date "2007-07-01"
+
+    feed = map(parseEntry,calendar_client.GetCalendarEventFeed(uri=feed_uri,q=query).entry)
+
+    #find out next/prev week start/end
+    week_start=datetime.strptime(start, '%Y-%m-%d')
+    nextweek=monday2monday(week_start+timedelta(days=7))
+    lastweek=monday2monday(week_start-timedelta(days=7))
+
+    return template("feed.tpl",locals())
+
 if __name__ =="__main__":
     debug(True)
     run(reloader=True)
