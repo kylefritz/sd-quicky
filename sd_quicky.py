@@ -6,8 +6,8 @@ from datetime import date, timedelta, datetime
 import bitly
 import feed.date.rfc3339
 
-BITLY_LOGIN="briansierakowski"
-BITLY_API="R_0e9d2bad7a1c308142639c1982a93984"
+BITLY_LOGIN="sdbaltimore"
+BITLY_API="R_3677d6826fab742f02f027226dff3d2c"
 BITLY=bitly.Api(login=BITLY_LOGIN,apikey=BITLY_API)
 
 def matchOrEmpty(regex,text):
