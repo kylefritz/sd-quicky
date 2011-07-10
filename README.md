@@ -2,6 +2,12 @@
 
 Format events for startup digest from a google calendar feed
 
+use:
+
+`$ pip install -r requirements.txt`
+
+to resolve requirements
+
 ##TODO
  * get dotcloud deployment working
  * add check for multiday events
