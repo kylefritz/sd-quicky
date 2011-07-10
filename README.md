@@ -9,6 +9,7 @@ use:
 to resolve requirements
 
 ##TODO
+ * can only assign one value to 'link', need room for multiple links to display
  * add check for multiday events
  * add functionality to 'approve' event, which updates it with result as description and moves it to production cal
  
