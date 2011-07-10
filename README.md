@@ -3,6 +3,7 @@
 Format events for startup digest from a google calendar feed
 
 ##TODO
+ * get dotcloud deployment working
  * add check for multiday events
  * add functionality to 'approve' event, which updates it with result as description and moves it to production cal
  
