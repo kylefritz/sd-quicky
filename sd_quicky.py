@@ -31,11 +31,11 @@ def parseEntry(entry):
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
     d["description"]=content
-    link_regex = matchOrEmpty(re.compile("http://[^ ]+"),content)
+    link_regex = matchOrEmpty(re.compile("http://[^ \s]+"),content)
     if link_regex in content:
         #look for a link in the body
         try:
-            d["link"]= matchOrEmpty(re.compile("http://[^ ]+"),content)
+            d["link"]= matchOrEmpty(re.compile("http://[^ \s]+"),content)
 
             #try to shorten link, fall back to regular link
             d["short-link"]=d["link"]
