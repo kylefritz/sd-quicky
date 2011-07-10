@@ -6,8 +6,8 @@ from datetime import date, timedelta, datetime
 import bitly
 import feed.date.rfc3339
 
-BITLY_LOGIN="sdbaltimore"
-BITLY_API="R_3677d6826fab742f02f027226dff3d2c"
+BITLY_LOGIN="briansierakowski"
+BITLY_API="R_0e9d2bad7a1c308142639c1982a93984"
 BITLY=bitly.Api(login=BITLY_LOGIN,apikey=BITLY_API)
 
 
@@ -27,7 +27,7 @@ def parseEntry(entry):
     date=entry.when.pop(0)
     timestamp_start = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.start))
     timestamp_end = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.end))
-    d["when"]= timestamp_start.strftime('%A, %B %d at %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
+    d["when"]= timestamp_start.strftime('%A, %B %d from %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
     if "Link:" in content:
