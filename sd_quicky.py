@@ -30,6 +30,8 @@ def parseEntry(entry):
     d["when"]= timestamp_start.strftime('%A, %B %d from %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
+    if content is None:
+        content = "Blank SOOOONNNN!"
     d["description"]=content
     link_regex = matchOrEmpty(re.compile("http://[^ \s]+"),content) or matchOrEmpty(re.compile("www.[^ \s]+"),content)
     if link_regex in content:
@@ -107,4 +109,3 @@ def show_feed(feed_uri,start,end):
 if __name__ =="__main__":
     debug(True)
     run(reloader=True)
-
