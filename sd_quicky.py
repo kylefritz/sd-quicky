@@ -33,7 +33,7 @@ def parseEntry(entry):
     if content is None:
         content = "Blank SOOOONNNN!"
     d["description"]=content
-    link_regex = matchOrEmpty(re.compile("http://[^ \s]+"),content) or matchOrEmpty(re.compile("www.[^ \s]+"),content)
+    link_regex = matchOrEmpty(re.compile("http://[^ \s]+|www.[^ \s]+"),content)
     if link_regex in content:
         #look for a link in the body
         try:
