@@ -41,6 +41,10 @@ def monday2monday(near):
     following_sunday=near+(7*one_day)
     return (near.strftime('%Y-%m-%d'),following_sunday.strftime('%Y-%m-%d'))
 
+def printAllLinks(list):
+    for link in list:
+        print 'More info: <a href="%s">%s</a>'
+
 
 @route('/')
 def redirect_to_closest_feed():
