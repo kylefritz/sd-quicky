@@ -33,22 +33,29 @@ def parseEntry(entry):
     if content is None:
         content = "Blank SOOOONNNN!"
     d["description"]=content
-    link_regex = matchOrEmpty(re.compile("http://[^ \s]+|www.[^ \s]+"),content)
-    if link_regex in content:
-        #look for a link in the body
-        try:
-            d["link"]= matchOrEmpty(re.compile("http://[^ \s]+"),content) or matchOrEmpty(re.compile("www.[^ \s]+"),content)
+    link_regex = re.findall("http://[^ \s]+|www.[^ \s]+",content)
+    if link_regex is None:
+        d["short-link"] = "No Link"
+    else:
+        d["short-link"] = []
+    for link in link_regex:
+        d["short-link"].append(BITLY.shorten(link))
+    return d
+        
+        
+      #  try:
+           # d["link"]= matchOrEmpty(re.compile("http://[^ \s]+"),content) or matchOrEmpty(re.compile("www.[^ \s]+"),content)
 
             #try to shorten link, fall back to regular link
-            d["short-link"]=d["link"]
-            try:
-                d["short-link"]=BITLY.shorten(d["link"])
-            except:
-                pass
-        except:
+           # d["short-link"]=d["link"]
+           # try:
+           #     d["short-link"]=BITLY.shorten(d["link"])
+           # except:
+            #    pass
+       # except:
             #if we don't find one, go on
-            pass
-    return d
+            #pass
+    # return d
 
 def monday2monday(near):
     #gcal api uses inclusive start date, exclusive end date
