@@ -27,8 +27,16 @@ def parseEntry(entry):
         d["short-link"] = "No Link"
     else:
         d["short-link"] = []
+      
     for link in link_regex:
-        d["short-link"].append(BITLY.shorten(link))
+        # If link is already a bitly link ...
+        if re.match("http://bit.ly/[^ \s]+", link):
+            # Turn it back into a long form URL ...
+            newBitly = BITLY.expand(link)
+            # Then shorten it again with our account so we can track it.
+            d["short-link"].append(BITLY.shorten(newBitly))
+        else:
+            d["short-link"].append(BITLY.shorten(link))
     return d
 
 def monday2monday(near):
