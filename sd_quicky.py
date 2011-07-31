@@ -22,7 +22,7 @@ def parseEntry(entry):
     if content is None:
         content = "Blank SOOOONNNN!"
     d["description"]=content
-    link_regex = re.findall("http://[^ \s]+|www.[^ \s]+",content)
+    link_regex = re.findall("http://[^ \s]+|www.[^ \s]+|https://[^ \s]+",content)
     if link_regex is None:
         d["short-link"] = "No Link"
     else:
@@ -30,7 +30,7 @@ def parseEntry(entry):
       
     for link in link_regex:
         # If link is already a bitly link ...
-        if re.match("http://bit.ly/[^ \s]+", link):
+        if re.match("http://bit.ly/[^ \s]+|http://conta.cc/[^ \s]", link):
             # Turn it back into a long form URL ...
             newBitly = BITLY.expand(link)
             # Then shorten it again with our account so we can track it.
