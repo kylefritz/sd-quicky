@@ -14,9 +14,14 @@ def parseEntry(entry):
     d={}
     d["title"]=entry.title.text
     date=entry.when.pop(0)
-    timestamp_start = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.start))
-    timestamp_end = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.end))
-    d["when"]= timestamp_start.strftime('%A, %B %d from %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
+    allDayMatch = re.compile("^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$")
+    # Checking to make sure date does not match yyyy-mm-dd format, which indicates an all day event
+    if re.match("^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$", date.start) is None:
+        timestamp_start = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.start))
+        timestamp_end = datetime.fromtimestamp(feed.date.rfc3339.tf_from_timestamp(date.end))
+        d["when"]= timestamp_start.strftime('%A, %B %d from %I:%M %p') + timestamp_end.strftime(' to %I:%M %p')
+    else:    
+        d["when"]= date.start
     d["where"]=entry.where.pop(0).value
     content=entry.content.text
     if content is None:
