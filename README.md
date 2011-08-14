@@ -9,11 +9,12 @@ use:
 to resolve requirements
 
 ##TODO
- * add check for multiday events
+ * Recurring event bug: recurring events get put at the beginning of week.
  * add functionality to 'approve' event, which updates it with result as description and moves it to production cal
  
 
 ##TODONE:
+ * ~~add check for multiday events~~
  * ~~Bug: SDq crashes when trying to bit.ly a bit.ly, which will hereafter be reffered to as the 'Xibit Bug'~~
  * ~~can only assign one value to 'link', need room for multiple links to display~~
  * ~~get dotcloud deployment working~~
